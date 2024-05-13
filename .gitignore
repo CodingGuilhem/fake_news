@@ -3,3 +3,6 @@
 
 # Ignore the data folder
 /data/
+
+# Ignore the virtual environment
+fake_news_env/
