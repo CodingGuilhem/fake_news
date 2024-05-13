@@ -4,12 +4,20 @@ import sys
 import warnings
 
 import pandas as pd
+import click
+import wordcloud
+import langdetect
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
+
 from pandas import DataFrame
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import PassiveAggressiveClassifier
 from sklearn.metrics import accuracy_score
-import click
+
+import MyNLPUtilities
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 def first_classifier(data: DataFrame, test_size: float):
@@ -19,7 +27,8 @@ def first_classifier(data: DataFrame, test_size: float):
     """
     
     # Split the dataset into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(data['text'], data['label'], test_size=test_size, random_state=42)
+    print(data.columns)
+    X_train, X_test, y_train, y_test = train_test_split(data['text'], data['text_type'], test_size=test_size, random_state=42)
 
     # Create a TF-IDF vectorizer
     tfidf_vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7)
@@ -43,6 +52,15 @@ def first_classifier(data: DataFrame, test_size: float):
     accuracy = accuracy_score(y_test, y_pred)
     print(f"Accuracy: {accuracy}")
 
+def wordcloud_generator(text: str)-> wordcloud :
+    wc = wordcloud.WordCloud(background_color='black', max_words=100, 
+                         max_font_size=35)
+    wc = wc.generate(text)
+    fig = plt.figure(num=1)
+    plt.axis('off')
+    plt.imshow(wc, cmap=None)
+    plt.show()
+
 @click.command()
 @click.argument("input_file", type=click.Path(exists=True))
 @click.argument("test_size", type=click.FLOAT, default=0.2)
@@ -52,8 +70,12 @@ def main(input_file: str, test_size: float):
     input_file: str: Path to the input file
     test_size: float: Proportion of the dataset to include in the test split
     """
-    input_data = pd.read_csv(input_file,sep=',',quotechar='"',encoding='utf-8')
-    print(first_classifier(input_data, test_size))
+    column_name = ['public_id','text_number','text','text_type']
+    input_data = pd.read_csv(input_file,sep=',',quotechar='"',usecols=[1:],names = column_name)
+    print(input_data[1:2]['title'])
+    # wordcloud_generator(string)
+
+    # first_classifier(input_data,test_size)
 
 
 if __name__ == '__main__':

@@ -1,7 +1,8 @@
 # Ignore output directories
 /tmp/
 
-# Ignore the data folder
+# Ignore the data folder and pycache
+scripts/__pychache__/
 /data/
 
 # Ignore the virtual environment
