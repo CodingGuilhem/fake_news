@@ -1,0 +1,5 @@
+# Ignore output directories
+/tmp/
+
+# Ignore the data folder
+/data/
